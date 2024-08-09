@@ -2,6 +2,7 @@
 
 namespace Config;
 
+use App\Filters\RoleCheck;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -12,6 +13,8 @@ use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
+use \App\Filters\RoleAdmin;
+use \App\Filters\RoleUser;
 
 class Filters extends BaseFilters
 {
@@ -34,6 +37,9 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'rolecheck'     => RoleCheck::class,
+        'admin'         => RoleAdmin::class,
+        'user'          => RoleUser::class,
     ];
 
     /**
@@ -69,13 +75,28 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // 'honeypot',
-            // 'csrf',
-            // 'invalidchars',
+            'rolecheck' => [
+                'except' => [
+                    '/',
+                    'AuthController/*'
+                ]
+            ]
         ],
         'after' => [
-            // 'honeypot',
-            // 'secureheaders',
+            'rolecheck' => [
+                'except' => [
+                    '/',
+                    'AuthController/*',
+                    'user',
+                    'admin',
+                ]
+            ],
+            'admin' => [
+                'except' => [
+                    '/',
+                    'admin/manajementuser',
+                ]
+            ]
         ],
     ];
 

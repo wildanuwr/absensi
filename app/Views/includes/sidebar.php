@@ -17,62 +17,31 @@
 
      <!-- Nav Item - Dashboard -->
      <li class="nav-item">
-         <a class="nav-link" href="dasboard">
+         <a class="nav-link" href="admin">
              <i class="fas fa-fw fa-tachometer-alt"></i>
              <span>Dashboard</span></a>
      </li>
-
-     <!-- Divider -->
-     <hr class="sidebar-divider">
-
      <!-- Nav Item - Pages Collapse Menu -->
      <li class="nav-item">
          <a class="nav-link" href="dasboard">
              <i class="fas fa-fw fa-tachometer-alt"></i>
              <span>Daftar Hadir</span></a>
      </li>
-     <!-- Divider -->
-     <hr class="sidebar-divider">
-
      <!-- Heading -->
      <li class="nav-item">
          <a class="nav-link" href="dasboard">
              <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Ringkasan Kehadiran</span></a>
-     </li>
-     <!-- Nav Item - Charts -->
-     <li class="nav-item">
-         <a class="nav-link" href="dasboard">
-             <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Manajemen Siswa</span></a>
+             <span>Laporan Absensi Harian</span></a>
      </li>
      <!-- Nav Item - Tables -->
      <li class="nav-item">
          <a class="nav-link" href="dasboard">
              <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Rekapitulasi Kehadiran</span></a>
+             <span>Laporan Absensi</span></a>
      </li>
 
      <li class="nav-item">
-         <a class="nav-link" href="dasboard">
-             <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Pengaturan Sistem</span></a>
-     </li>
-
-     <li class="nav-item">
-         <a class="nav-link" href="dasboard">
-             <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Statistik dan Analisis</span></a>
-     </li>
-
-     <li class="nav-item">
-         <a class="nav-link" href="dasboard">
-             <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Integrasi dan Sinkronisasi</span></a>
-     </li>
-
-     <li class="nav-item">
-         <a class="nav-link" href="dasboard">
+         <a class="nav-link" href="admin/manajementuser">
              <i class="fas fa-fw fa-tachometer-alt"></i>
              <span>User Management</span></a>
      </li>

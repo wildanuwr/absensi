@@ -2,14 +2,9 @@
 
 namespace App\Controllers;
 
-class Home extends BaseController
+class UserController extends BaseController
 {
-    public function index(): string
-    {
-        return view('admin/manajemen');
-    }
-
-    public function userdashboard()
+    public function index()
     {
         $data = [
             'judul' => 'Home',
