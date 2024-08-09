@@ -13,14 +13,14 @@
     <title>Mobilekit Mobile UI Kit</title>
     <meta name="description" content="Mobilekit HTML Mobile UI Kit" />
     <meta name="keywords" content="bootstrap 4, mobile template, cordova, phonegap, mobile, html" />
-    <link rel="icon" type="image/png" href="users/img/favicon.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="<?= base_url()  ?>/users/img/favicon.png" sizes="32x32" />
     <link rel="apple-touch-icon" sizes="180x180" href="users/img/icon/192x192.png" />
-    <link rel="stylesheet" href="users/css/inc/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="users/css/inc/owl-carousel/owl.carousel.min.css" />
-    <link rel="stylesheet" href="users/css/inc/owl-carousel/owl.theme.default.css" />
+    <link rel="stylesheet" href="<?= base_url()  ?>/users/css/inc/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?= base_url()  ?>/users/css/inc/owl-carousel/owl.carousel.min.css" />
+    <link rel="stylesheet" href="<?= base_url()  ?>/users/css/inc/owl-carousel/owl.theme.default.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,700&display=swap" />
-    <link rel="stylesheet" href="users/fontawesome-free/css/all.min.css" />
-    <link rel="stylesheet" href="users/css/style.css" />
+    <link rel="stylesheet" href="<?= base_url()  ?>/users/fontawesome-free/css/all.min.css" />
+    <link rel="stylesheet" href="<?= base_url()  ?>/users/css/style.css" />
 </head>
 
 <body style="background-color: #e9ecef">
@@ -42,7 +42,7 @@
 
     <!-- App Bottom Menu -->
     <div class="appBottomMenu">
-        <a href="<?= base_url('user') ?>" class="item <?= $menu == 'home' ? 'active' : '' ?> ">
+        <a href="<?= base_url('') ?>/user/dashboard" class="item <?= $menu == 'home' ? 'active' : '' ?> ">
             <div class="col">
                 <i class="fas fa-home fa-3x <?= $menu == 'home' ? '' : 'text-dark' ?>"></i>
                 <strong>Home</strong>
@@ -67,7 +67,7 @@
                 <strong>Docs</strong>
             </div>
         </a>
-        <a href="<?= base_url('profile') ?>" class="item <?= $menu == 'profile' ? 'active' : '' ?>">
+        <a href="<?= base_url('') ?>/user/profile" class="item <?= $menu == 'profile' ? 'active' : '' ?>">
             <div class="col">
                 <i class="fas fa-user-tie fa-3x <?= $menu == 'profile' ? '' : 'text-dark' ?>"></i>
                 <strong>Profile</strong>
@@ -78,22 +78,22 @@
 
     <!-- ///////////// Js Files ////////////////////  -->
     <!-- Jquery -->
-    <script src="users/js/lib/jquery-3.4.1.min.js"></script>
+    <script src="<?= base_url()  ?>/users/js/lib/jquery-3.4.1.min.js"></script>
     <!-- Bootstrap-->
-    <script src="users/js/lib/popper.min.js"></script>
-    <script src="users/js/lib/bootstrap.min.js"></script>
+    <script src="<?= base_url()  ?>/users/js/lib/popper.min.js"></script>
+    <script src="<?= base_url()  ?>/users/js/lib/bootstrap.min.js"></script>
     <!-- Chart JS -->
-    <script src="users/chart/dist/chart.js"></script>
+    <script src="<?= base_url()  ?>/users/chart/dist/chart.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
     <!-- Owl Carousel -->
-    <script src="users/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+    <script src="<?= base_url()  ?>/users/js/plugins/owl-carousel/owl.carousel.min.js"></script>
     <!-- jQuery Circle Progress -->
-    <script src="users/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+    <script src="<?= base_url()  ?>/users/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
     <!-- Base Js File -->
-    <script src="users/js/base.js"></script>
+    <script src="<?= base_url()  ?>/users/js/base.js"></script>
 
     <script>
         const ctx = document.getElementById('myChart');

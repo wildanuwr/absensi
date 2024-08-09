@@ -21,10 +21,10 @@ class RoleCheck implements FilterInterface
         $session = session();
         if ($session->get('logged_in')) {
             if ($session->get('role') == 1) {
-                return redirect()->to('/admin');
+                return redirect()->to('/admin/dashboard');
                 // Redirect ke halaman admin
             } else {
-                return redirect()->to('/user');
+                return redirect()->to('/user/dashboard');
             }
         }
     }

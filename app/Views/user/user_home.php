@@ -1,7 +1,7 @@
 <div class="section bg-primary" id="user-section">
     <div id="user-detail">
         <div class="avatar">
-            <img src="users/img/sample/avatar/avatar1.jpg" alt="avatar" class="imaged w64 rounded" />
+            <img src="<?= base_url()  ?>/users/img/sample/avatar/avatar1.jpg" alt="avatar" class="imaged w64 rounded" />
         </div>
         <div id="user-info">
             <h2 id="user-name">Admin Mobile</h2>

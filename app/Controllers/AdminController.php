@@ -15,4 +15,12 @@ class AdminController extends BaseController
     {
         echo view('admin/manajementuser');
     }
+
+    public function logout(){
+        session()->destroy();
+        return redirect()->to('/');
+    }
+    public function block(){
+        echo view('block_akses');
+    }
 }

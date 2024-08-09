@@ -4,7 +4,7 @@
      <!-- Sidebar - Brand -->
      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
          <div>
-             <img width="30px" height="30px" src="img/siap.png" alt="">
+             <img width="30px" height="30px" src="<?= base_url() ?>/img/siap.png" alt="">
          </div>
          <div class="sidebar-brand-text mx-3 text-start">SIAB
              <p style="font-size: 5px;" class="h6">Sistem Informasi Absensi</p>
@@ -17,7 +17,7 @@
 
      <!-- Nav Item - Dashboard -->
      <li class="nav-item">
-         <a class="nav-link" href="admin">
+         <a class="nav-link" href="dashboard">
              <i class="fas fa-fw fa-tachometer-alt"></i>
              <span>Dashboard</span></a>
      </li>
@@ -41,7 +41,7 @@
      </li>
 
      <li class="nav-item">
-         <a class="nav-link" href="admin/manajementuser">
+         <a class="nav-link" href="manajementuser">
              <i class="fas fa-fw fa-tachometer-alt"></i>
              <span>User Management</span></a>
      </li>

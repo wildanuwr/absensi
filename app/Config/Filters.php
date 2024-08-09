@@ -82,22 +82,7 @@ class Filters extends BaseFilters
                 ]
             ]
         ],
-        'after' => [
-            'rolecheck' => [
-                'except' => [
-                    '/',
-                    'AuthController/*',
-                    'user',
-                    'admin',
-                ]
-            ],
-            'admin' => [
-                'except' => [
-                    '/',
-                    'admin/manajementuser',
-                ]
-            ]
-        ],
+        'after' => []
     ];
 
     /**

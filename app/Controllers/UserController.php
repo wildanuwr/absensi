@@ -23,4 +23,7 @@ class UserController extends BaseController
         ];
         return view('user/includes/template_user', $data);
     }
+    public function block(){
+        echo view('block_akses');
+    }
 }

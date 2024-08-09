@@ -13,9 +13,9 @@ class RoleAdmin implements FilterInterface
         // Ambil role dari session
         $role = session()->get('role');
 
-        // Jika role bukan admin (role 1), redirect ke halaman tidak ada akses
+        // Jika role bukan user (role 2), redirect ke halaman tidak ada akses
         if ($role !== '1') {
-            return redirect()->to('/no_access');
+            return redirect()->to('/user/block');
         }
     }
 

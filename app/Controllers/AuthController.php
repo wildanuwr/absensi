@@ -35,9 +35,9 @@ class AuthController extends BaseController
                 $session->set($ses_data);
 
                 if ($data['role'] == 1) {
-                    return redirect()->to('admin'); // Redirect ke halaman admin
+                    return redirect()->to('admin/dashboard'); // Redirect ke halaman admin
                 } else if ($data['role'] == 2) {
-                    return redirect()->to('user'); // Redirect ke halaman user
+                    return redirect()->to('user/dashboard'); // Redirect ke halaman user
                 }
             } else {
                 $session->setFlashdata('msg', 'Password Salah');
