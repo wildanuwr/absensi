@@ -10,11 +10,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#000000" />
-    <title>Mobilekit Mobile UI Kit</title>
+    <title>SIAB | Sistem Informasi Absensi</title>
     <meta name="description" content="Mobilekit HTML Mobile UI Kit" />
     <meta name="keywords" content="bootstrap 4, mobile template, cordova, phonegap, mobile, html" />
     <link rel="icon" type="image/png" href="<?= base_url()  ?>/users/img/favicon.png" sizes="32x32" />
-    <link rel="apple-touch-icon" sizes="180x180" href="users/img/icon/192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('')  ?>users/img/icon/192x192.png" />
     <link rel="stylesheet" href="<?= base_url()  ?>/users/css/inc/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="<?= base_url()  ?>/users/css/inc/owl-carousel/owl.carousel.min.css" />
     <link rel="stylesheet" href="<?= base_url()  ?>/users/css/inc/owl-carousel/owl.theme.default.css" />
@@ -42,7 +42,7 @@
 
     <!-- App Bottom Menu -->
     <div class="appBottomMenu">
-        <a href="<?= base_url('') ?>/user/dashboard" class="item <?= $menu == 'home' ? 'active' : '' ?> ">
+        <a href="<?= base_url('') ?>user/dashboard" class="item <?= $menu == 'home' ? 'active' : '' ?> ">
             <div class="col">
                 <i class="fas fa-home fa-3x <?= $menu == 'home' ? '' : 'text-dark' ?>"></i>
                 <strong>Home</strong>
@@ -67,7 +67,7 @@
                 <strong>Docs</strong>
             </div>
         </a>
-        <a href="<?= base_url('') ?>/user/profile" class="item <?= $menu == 'profile' ? 'active' : '' ?>">
+        <a href="<?= base_url('') ?>user/profile" class="item <?= $menu == 'profile' ? 'active' : '' ?>">
             <div class="col">
                 <i class="fas fa-user-tie fa-3x <?= $menu == 'profile' ? '' : 'text-dark' ?>"></i>
                 <strong>Profile</strong>

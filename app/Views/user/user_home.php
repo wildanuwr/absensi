@@ -4,8 +4,8 @@
             <img src="<?= base_url()  ?>/users/img/sample/avatar/avatar1.jpg" alt="avatar" class="imaged w64 rounded" />
         </div>
         <div id="user-info">
-            <h2 id="user-name">Admin Mobile</h2>
-            <span id="user-role">Programmer</span>
+            <h2 id="user-name"><?= esc($user['Nama']); ?></h2>
+            <span id="user-role"><?= esc($user['jabatan']); ?></span>
         </div>
     </div>
 </div>
@@ -67,7 +67,6 @@
                             </div>
                             <div class="presencedetail">
                                 <h4 class="presencetitle">Masuk</h4>
-                                <span>07:00</span>
                             </div>
                         </div>
                     </div>
@@ -90,15 +89,18 @@
             </div>
         </div>
     </div>
-
     <div class="rekappresence mt-1">
-        <div class="col">
-            <canvas id="myChart" style="min-height: 460px; height: 460px; max-height: 460px; max-width: 100%;"></canvas>
+
+        <div class="col" style="min-height: 260px; height: 260px; max-height: 260px; max-width: 100%;">
+
+            <div class="jam-digital">
+                <h1><span id="tanggalwaktu"></span></h1>
+                <div id="jam"></div>
+                <div id="unit"></div>
+            </div>
         </div>
     </div>
-
     <div class="rekappresence mt-1">
-
         <div class="row">
             <div class="col-6">
                 <div class="card">

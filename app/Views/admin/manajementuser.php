@@ -5,11 +5,16 @@
     <div class="container-fluid">
         <h1>Manajemen User</h1>
         <div class="row d-flex">
-            <button type="button" class="btn btn-primary m-2 col-lg-1">+ Tambah</button>
-            <div class="m-1">
-                <label for="formFile" class="col form-label">Import User</label>
-                <input class="form-control" type="file" id="formFile">
+            <div class="col">
+                <button type="button" class="btn btn-primary m-2">+ Tambah</button>
             </div>
+            <div class="col-3 d-flex ">
+                <input class="form-control " type="file" id="formFile">
+                <div class="col">
+                    <button type="button" class="btn btn-success">Template</button>
+                </div>
+            </div>
+
         </div>
         <table class="table table-striped">
             <thead>
