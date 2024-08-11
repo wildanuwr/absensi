@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,700&display=swap" />
     <link rel="stylesheet" href="<?= base_url()  ?>/users/fontawesome-free/css/all.min.css" />
     <link rel="stylesheet" href="<?= base_url()  ?>/users/css/style.css" />
+    <link rel="stylesheet" href="<?= base_url()  ?>/users/css/kamera.css" />
 </head>
 
 <body style="background-color: #e9ecef">
@@ -54,10 +55,14 @@
                 <strong>Calendar</strong>
             </div>
         </a>
-        <a href="#" class="item ">
+        <a
+            id="<?= $menu == 'absen' ? 'submitButton' : '' ?>"
+            href="<?= $menu == 'absen' ? 'javascript:void(0);' : base_url('user/absen') ?>"
+            class="item <?= $menu == 'absen' ? 'active' : '' ?>"
+            <?= $menu == 'absen' ? 'onclick="handleSubmit()" ' : '' ?>>
             <div class="col">
                 <div class="action-button large">
-                    <i class="fas fa-camera text-white fa-3x "></i>
+                    <i class="fas fa-camera text-white fa-3x"></i>
                 </div>
             </div>
         </a>
@@ -79,6 +84,7 @@
     <!-- ///////////// Js Files ////////////////////  -->
     <!-- Jquery -->
     <script src="<?= base_url()  ?>/users/js/lib/jquery-3.4.1.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao&libraries=places&callback=initMap" async defer></script>
     <!-- Bootstrap-->
     <script src="<?= base_url()  ?>/users/js/lib/popper.min.js"></script>
     <script src="<?= base_url()  ?>/users/js/lib/bootstrap.min.js"></script>
@@ -94,22 +100,6 @@
     <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
     <!-- Base Js File -->
     <script src="<?= base_url()  ?>/users/js/base.js"></script>
-
-    <script>
-        const ctx = document.getElementById('myChart');
-
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    borderWidth: 1
-                }]
-            }
-        });
-    </script>
 </body>
 
 </html>

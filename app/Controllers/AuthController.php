@@ -28,6 +28,7 @@ class AuthController extends BaseController
             if ($authenticatePassword) {
                 $ses_data = [
                     'id' => $data['id'],
+                    'Nama' => $data['Nama'],
                     'email' => $data['email'],
                     'role' => $data['role'],
                     'logged_in' => TRUE
