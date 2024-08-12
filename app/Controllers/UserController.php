@@ -26,16 +26,32 @@ class UserController extends BaseController
     public function index()
     {
         $session = session();
-        $id = $session->get('id'); // Pastikan ini sesuai dengan key yang disimpan saat login
-
+        $id = $session->get('id');
         if (!$id) {
-            return redirect()->to('/'); // Redirect ke halaman login jika user_id tidak ada di sesi
+            return redirect()->to('/');
         }
 
-        $data['user'] = $this->loadUserData($id);
+        $user = $this->loadUserData($id);
+        $nama = $user['Nama']; // Ambil nama dari data user
+        $date = date('Y-m-d'); // Tanggal hari ini
+
+        $absenModel = new AbsensiModel();
+
+        // Query untuk mendapatkan semua baris jam masuk dan jam keluar
+        $builder = $absenModel->builder();
+        $builder->select('jam_masuk, jam_keluar, tanggal');
+        $builder->where('Nama', $nama);
+        $builder->where('tanggal', $date);
+        $query = $builder->get();
+
+        $results = $query->getResultArray(); // Mengambil semua hasil sebagai array
+
+        // Periksa apakah ada hasil dan atur variabel yang sesuai
+        $data['user'] = $user;
         $data['judul'] = 'Home';
         $data['menu'] = 'home';
         $data['page'] = 'user/user_home';
+        $data['absensi'] = $results; // Kirim hasil ke view
 
         return view('user/includes/template_user', $data);
     }
@@ -80,7 +96,7 @@ class UserController extends BaseController
             // Handle file upload
             $foto = $this->request->getFile('foto');
             if ($foto->isValid() && !$foto->hasMoved()) {
-                $filePath = WRITEPATH . 'users/img/foto/';
+                $filePath = FCPATH . 'img/foto/';
                 $foto->move($filePath, $randomName);
 
                 // Prepare data to save

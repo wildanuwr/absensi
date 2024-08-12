@@ -15,3 +15,24 @@ video, canvas {
     -ms-border-radius: 10px;
     -o-border-radius: 10px;
 }
+@media screen and (max-width: 980px){
+
+    video, canvas {
+
+        display: block;
+        margin: 6% auto;
+        margin-top: 10%;
+        border-radius: 10px;
+    }
+    #map {
+        justify-content: center;
+        height: 200px;
+        width: 95%;
+        margin: 1% auto;
+        border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        -ms-border-radius: 10px;
+        -o-border-radius: 10px;
+    } 
+}

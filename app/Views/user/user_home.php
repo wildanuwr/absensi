@@ -58,35 +58,43 @@
 <div class="section mt-2" id="presence-section">
     <div class="todaypresence">
         <div class="row">
-            <div class="col-6">
-                <div class="card bg-success">
-                    <div class="card-body">
-                        <div class="presencecontent">
-                            <div class="iconpresence">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="presencedetail">
-                                <h4 class="presencetitle">Masuk</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="card bg-danger">
-                    <div class="card-body">
-                        <div class="presencecontent">
-                            <div class="iconpresence">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="presencedetail">
-                                <h4 class="presencetitle">Pulang</h4>
-                                <span>12:00</span>
+            <?php if (!empty($absensi)): ?>
+                <div class="col-6">
+                    <div class="card bg-success">
+                        <div class="card-body">
+                            <div class="presencecontent">
+                                <div class="iconpresence">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="presencedetail">
+
+                                    <h4 class="presencetitle">Masuk</h4>
+                                    <?php foreach ($absensi as $entry): ?>
+                                        <span><?= esc($entry['jam_masuk']); ?></span>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-6">
+                    <div class="card bg-danger">
+                        <div class="card-body">
+                            <div class="presencecontent">
+                                <div class="iconpresence">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="presencedetail">
+                                    <h4 class="presencetitle">Pulang</h4>
+                                    <?php foreach ($absensi as $record): ?>
+                                        <span><?= esc($record['jam_keluar']); ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
     <div class="rekappresence mt-1">
