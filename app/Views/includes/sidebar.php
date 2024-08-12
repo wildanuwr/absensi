@@ -22,11 +22,6 @@
              <span>Dashboard</span></a>
      </li>
      <!-- Nav Item - Pages Collapse Menu -->
-     <li class="nav-item">
-         <a class="nav-link" href="dasboard">
-             <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Daftar Hadir</span></a>
-     </li>
      <!-- Heading -->
      <li class="nav-item">
          <a class="nav-link" href="dasboard">

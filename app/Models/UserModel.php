@@ -8,11 +8,15 @@ class UserModel extends Model
 {
     protected $table = 'user';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['id', 'Nama', 'email', 'password', 'role', 'tanggal'];
+    protected $allowedFields = ['Nama', 'jabatan', 'email', 'password', 'no_hp', 'foto', 'role'];
 
     public function getUserById($id)
     {
         return $this->where('id', $id)->first();
     }
-}
 
+    public function getAllUsers()
+    {
+        return $this->findAll();
+    }
+}

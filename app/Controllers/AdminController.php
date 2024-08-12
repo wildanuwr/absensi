@@ -66,8 +66,43 @@ class AdminController extends BaseController
 
     public function manajementuser()
     {
-        echo view('admin/manajementuser');
+        $session = session();
+        $id = $session->get('id');
+        if (!$id) {
+            return redirect()->to('/');
+        }
+
+        $user = $this->loadUserData($id);
+        $data['user'] = $user;
+        $data['judul'] = 'Manajement User';
+
+        $userModel = new UserModel();
+        $data['users'] = $userModel->getAllUsers();
+
+        // Mengirim data ke view
+        echo view('admin/manajementuser', $data);
     }
+
+    public function addUser()
+    {
+        $userModel = new UserModel();
+
+        $newUserData = [
+            'Nama'     => 'Nama User Baru',
+            'jabatan'  => 'Jabatan User Baru',
+            'email'    => 'email@contoh.com',
+            'password' => password_hash('password_user', PASSWORD_DEFAULT),
+            'no_hp'    => '08123456789',
+            'foto'     => 'path/to/foto.jpg',
+            'role'     => 'user_role'
+        ];
+
+        $userModel->insert($newUserData);
+
+        // Redirect ke halaman user list
+        return redirect()->to('admin/manajementuser');
+    }
+
 
     public function logout()
     {

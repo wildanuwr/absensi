@@ -9,7 +9,8 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     $routes->get('dashboard', 'AdminController::index/$1');
-    $routes->get('manajementuser', 'AdminController::manajementuser');
+    $routes->get('manajementuser', 'AdminController::manajementuser/$1');
+    $routes->post('adduser', 'AdminController::addUser');
     $routes->get('logout', 'AuthController::logout');
     $routes->get('block', 'AdminController::block');
 
