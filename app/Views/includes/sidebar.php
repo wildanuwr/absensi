@@ -17,7 +17,7 @@
 
      <!-- Nav Item - Dashboard -->
      <li class="nav-item">
-         <a class="nav-link" href="dashboard">
+         <a class="nav-link" href="<?= base_url() ?>admin/dashboard">
              <i class="fas fa-fw fa-tachometer-alt"></i>
              <span>Dashboard</span></a>
      </li>
@@ -36,7 +36,7 @@
      </li>
 
      <li class="nav-item">
-         <a class="nav-link" href="manajementuser">
+         <a class="nav-link" href="<?= base_url() ?>admin/manajementuser">
              <i class="fas fa-fw fa-tachometer-alt"></i>
              <span>User Management</span></a>
      </li>

@@ -1,12 +1,17 @@
 <?= $this->extend('admin/includes/template') ?>
 <?= $this->section('konten') ?>
 <div id="content-wrapper" class="d-flex flex-column">
-
+    <?php if (session()->getFlashdata('success')) : ?>
+        <div class="alert alert-success">
+            <?= session()->getFlashdata('success') ?>
+        </div>
+    <?php endif; ?>
     <div class="container-fluid">
         <h1>Manajemen User</h1>
         <div class="row d-flex">
             <div class="col">
-                <button type="button" class="btn btn-primary m-2">+ Tambah</button>
+                <?= $this->include('admin/includes/formadduser') ?>
+                <button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#exampleModal">+ Tambah</button>
             </div>
             <div class="col-3 d-flex ">
                 <div class="mb-3">
@@ -27,6 +32,7 @@
                 <th scope="col">No Hp</th>
                 <th scope="col">Email</th>
                 <th scope="col">Role</th>
+                <th scope="col">Aksi</th> <!-- Tambahkan kolom aksi -->
             </tr>
         </thead>
         <tbody>
@@ -49,14 +55,19 @@
                             }
                             ?>
                         </td>
+                        <td>
+                            <a href="<?= base_url('admin/editUser/' . $userItem['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="<?= base_url('admin/deleteUser/' . $userItem['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?');">Hapus</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="6">Tidak ada data pengguna yang ditemukan.</td>
+                    <td colspan="7">Tidak ada data pengguna yang ditemukan.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
     </table>
+
 </div>
 <?= $this->EndSection() ?>

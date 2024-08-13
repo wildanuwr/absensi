@@ -88,21 +88,95 @@ class AdminController extends BaseController
         $userModel = new UserModel();
 
         $newUserData = [
-            'Nama'     => 'Nama User Baru',
-            'jabatan'  => 'Jabatan User Baru',
-            'email'    => 'email@contoh.com',
-            'password' => password_hash('password_user', PASSWORD_DEFAULT),
-            'no_hp'    => '08123456789',
-            'foto'     => 'path/to/foto.jpg',
-            'role'     => 'user_role'
+            'Nama'     => $this->request->getPost('Nama'),
+            'jabatan'  => $this->request->getPost('jabatan'),
+            'email'    => $this->request->getPost('email'),
+            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT),
+            'no_hp'    => $this->request->getPost('no_hp'),
+            'foto'     => 'profile.png', // Sesuaikan dengan upload file jika ada
+            'role'     => $this->request->getPost('role')
         ];
 
-        $userModel->insert($newUserData);
+        if ($userModel->insert($newUserData) === false) {
+            // Jika insert gagal, tampilkan error
+            return redirect()->back()->withInput()->with('errors', $userModel->errors());
+        }
+
+        session()->setFlashdata('success', 'Berhasil Menambahkan User.');
 
         // Redirect ke halaman user list
         return redirect()->to('admin/manajementuser');
     }
 
+    public function getUserData($id)
+    {
+        $userModel = new UserModel();
+        $data['user'] = $userModel->find($id);
+        return view('admin/includes/editprofile', $data);
+    }
+
+
+    public function editUser($id)
+    {
+        $userModel = new UserModel();
+        $user = $userModel->find($id);
+
+        // Pastikan data adalah array
+        if (is_array($user)) {
+            // Kirim data ke view
+            return view('admin/includes/editprofile', ['user' => $user]);
+        } else {
+            throw new \Exception("Data tidak ditemukan");
+        }
+    }
+
+
+    public function updateUser($id)
+    {
+        $userModel = new UserModel();
+
+        // Ambil data lama pengguna berdasarkan ID
+        $existingUser = $userModel->find($id);
+
+        // Persiapkan data baru
+        $newUserData = [
+            'Nama'     => $this->request->getPost('Nama'),
+            'jabatan'  => $this->request->getPost('jabatan'),
+            'email'    => $this->request->getPost('email'),
+            'foto'    => $this->request->getPost('foto'),
+            'no_hp'    => $this->request->getPost('no_hp'),
+            'role'     => $this->request->getPost('role')
+        ];
+
+        // Cek apakah password diisi, jika tidak gunakan password lama
+        $password = $this->request->getPost('password');
+        if (!empty($password)) {
+            $newUserData['password'] = password_hash($password, PASSWORD_DEFAULT);
+        } else {
+            $newUserData['password'] = $existingUser['password'];
+        }
+
+        // Tambahkan foto jika diperlukan
+        if ($this->request->getFile('foto')->isValid()) {
+            $foto = $this->request->getFile('foto');
+            $fotoName = $foto->getRandomName();
+            $foto->move(FCPATH . 'img/profile/', $fotoName);
+            $newUserData['foto'] = $fotoName;
+        } else {
+            $newUserData['foto'] = $existingUser['foto'];
+        }
+
+        // Update data pengguna
+        if ($userModel->update($id, $newUserData) === false) {
+            // Jika update gagal, tampilkan error
+            return redirect()->back()->withInput()->with('errors', $userModel->errors());
+        }
+
+        session()->setFlashdata('success', 'Berhasil Update.');
+
+        // Redirect ke halaman user list
+        return redirect()->to('admin/manajementuser');
+    }
 
     public function logout()
     {

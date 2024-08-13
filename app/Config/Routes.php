@@ -10,7 +10,9 @@ use CodeIgniter\Router\RouteCollection;
 $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     $routes->get('dashboard', 'AdminController::index/$1');
     $routes->get('manajementuser', 'AdminController::manajementuser/$1');
-    $routes->post('adduser', 'AdminController::addUser');
+    $routes->post('updateUser/(:num)', 'AdminController::updateUser/$1');
+    $routes->get('profile/(:num)', 'AdminController::getUserData/$1');
+    $routes->post('addUser', 'AdminController::addUser');
     $routes->get('logout', 'AuthController::logout');
     $routes->get('block', 'AdminController::block');
 
@@ -26,6 +28,9 @@ $routes->group('user', ['filter' => 'user'], function ($routes) {
     $routes->get('block', 'UserController::block');
     // Tambahkan rute user lain di sini
 });
-
+$routes->set404Override('BlockAkses::show404');
 $routes->get('/', 'AuthController::login');
 $routes->post('/', 'AuthController::loginAuth');
+$routes->set404Override(function () {
+    echo view('block_akses');
+});
