@@ -7888,15 +7888,16 @@ body.dark-mode-active .cart-item .cart-item-footer {
   height: 180px;
   background-color: #092c9f;
   padding: 20px;
+  margin-bottom: 40px;
 }
 
 #user-detail {
-  margin-top: 20px;
   display: flex;
 }
 
 #user-info {
-  margin-left: 30px !important;
+  margin-left: 10px !important;
+  margin-top: 20px !important;
   line-height: 2px;
 }
 
@@ -7909,6 +7910,7 @@ body.dark-mode-active .cart-item .cart-item-footer {
 }
 
 #menu-section {
+  margin-top: 15px;
   position: absolute;
   width: 100%;
   top: 120px;

@@ -56,7 +56,7 @@
                             ?>
                         </td>
                         <td>
-                            <a href="<?= base_url('admin/editUser/' . $userItem['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="<?= base_url('admin/profile/' . $userItem['id']) ?>" class="btn btn-warning btn-sm">Edit</a>
                             <a href="<?= base_url('admin/deleteUser/' . $userItem['id']) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?');">Hapus</a>
                         </td>
                     </tr>

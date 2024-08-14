@@ -22,7 +22,9 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
 $routes->group('user', ['filter' => 'user'], function ($routes) {
     $routes->get('dashboard', 'UserController::index/$1');
     $routes->get('profile', 'UserController::userprofile');
+    $routes->post('updateUser/(:num)', 'UserController::updateUser/$1');
     $routes->get('absen', 'UserController::absen');
+    $routes->get('lokasi', 'UserController::lokasi');
     $routes->post('submit_absen', 'UserController::submit_absen');
     $routes->get('cek_jam_masuk', 'UserController::cek_jam_masuk');
     $routes->get('block', 'UserController::block');

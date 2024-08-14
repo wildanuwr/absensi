@@ -1,7 +1,7 @@
 <div class="section bg-primary" id="user-section">
     <div id="user-detail">
-        <div class="avatar">
-            <img src="<?= base_url()  ?>/users/img/sample/avatar/avatar1.jpg" alt="avatar" class="imaged w64 rounded" />
+        <div>
+            <img class="form-image" src="<?= base_url('img/profile/' . esc($user['foto'])); ?>" alt="avatar" style="max-width: 100px; max-height: 100px; border-radius: 50%;" />
         </div>
         <div id="user-info">
             <h2 id="user-name"><?= esc($user['Nama']); ?></h2>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="item-menu text-center">
                     <div class="menu-icon">
-                        <a href="" class="orange" style="font-size: 40px">
+                        <a href="<?= base_url('user/lokasi') ?>" class="orange" style="font-size: 40px">
                             <i class="fas fa-map-marker-alt"></i>
                         </a>
                     </div>

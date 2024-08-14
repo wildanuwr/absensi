@@ -80,6 +80,18 @@ class UserController extends BaseController
         return view('user/includes/template_user', $data);
     }
 
+    public function lokasi()
+    {
+        $session = session();
+        $id = $session->get('id');
+        $data['user'] = $this->loadUserData($id);
+        $data['menu'] = 'lokasi';
+        $data['judul'] = 'Lokasi';
+        $data['page'] = 'user/user_lokasi';
+
+        return view('user/includes/template_user', $data);
+    }
+
     public function submit_absen()
     {
         try {
@@ -158,6 +170,54 @@ class UserController extends BaseController
             return $this->response->setJSON(['jam_masuk' => null]);
         }
     }
+
+    public function updateUser($id)
+    {
+        $userModel = new UserModel();
+
+        // Ambil data lama pengguna berdasarkan ID
+        $existingUser = $userModel->find($id);
+
+        // Persiapkan data baru
+        $newUserData = [
+            'Nama'     => $this->request->getPost('Nama'),
+            'jabatan'  => $this->request->getPost('jabatan'),
+            'email'    => $this->request->getPost('email'),
+            'foto'    => $this->request->getPost('foto'),
+            'no_hp'    => $this->request->getPost('no_hp'),
+            'role'     => $this->request->getPost('role')
+        ];
+
+        // Cek apakah password diisi, jika tidak gunakan password lama
+        $password = $this->request->getPost('password');
+        if (!empty($password)) {
+            $newUserData['password'] = password_hash($password, PASSWORD_DEFAULT);
+        } else {
+            $newUserData['password'] = $existingUser['password'];
+        }
+
+        // Tambahkan foto jika diperlukan
+        if ($this->request->getFile('foto')->isValid()) {
+            $foto = $this->request->getFile('foto');
+            $fotoName = $foto->getRandomName();
+            $foto->move(FCPATH . 'img/profile/', $fotoName);
+            $newUserData['foto'] = $fotoName;
+        } else {
+            $newUserData['foto'] = $existingUser['foto'];
+        }
+
+        // Update data pengguna
+        if ($userModel->update($id, $newUserData) === false) {
+            // Jika update gagal, tampilkan error
+            return redirect()->back()->withInput()->with('errors', $userModel->errors());
+        }
+
+        session()->setFlashdata('success', 'Berhasil Update.');
+
+        // Redirect ke halaman user list
+        return redirect()->to('user/dashboard');
+    }
+
     public function block()
     {
         return view('block_akses');
