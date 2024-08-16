@@ -66,22 +66,39 @@ function handleSubmit() {
                         method: 'POST',
                         body: formData
                     })
-                    .then(response => response.text())  // Gunakan text() untuk sementara
-                    .then(result => {
-                        try {
-                            let jsonResponse = JSON.parse(result);  // Coba parse sebagai JSON
-                            console.log(jsonResponse);
-                            alert(jsonResponse.message);
-                        } catch (error) {
-                            console.error('Error parsing JSON:', error);
-                            console.log(result);  // Tampilkan respon yang tidak ter-parse
-                            alert('Respon dari server tidak valid.');
+                    .then(response => response.json())
+                    .then(jsonResponse => {
+                        console.log('Response dari server:', jsonResponse);
+                        if (jsonResponse.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: jsonResponse.message,
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Redirect to dashboard
+                                    window.location.href = 'user/dashboard'; // Pastikan URL ini sesuai dengan rute dashboard Anda
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: jsonResponse.message,
+                                confirmButtonText: 'OK'
+                            });
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Terjadi kesalahan saat mengirim data.');
-                    });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Kesalahan!',
+                            text: 'Terjadi kesalahan saat mengirim data.',
+                            confirmButtonText: 'OK'
+                        });
+                    });                    
 
                 }, function () {
                     alert('Error: The Geolocation service failed.');

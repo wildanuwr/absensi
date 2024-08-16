@@ -92,6 +92,18 @@ class UserController extends BaseController
         return view('user/includes/template_user', $data);
     }
 
+    public function izin()
+    {
+        $session = session();
+        $id = $session->get('id');
+        $data['user'] = $this->loadUserData($id);
+        $data['menu'] = 'izin';
+        $data['judul'] = 'Izin';
+        $data['page'] = 'user/user_izin';
+
+        return view('user/includes/template_user', $data);
+    }
+
     public function submit_absen()
     {
         try {
@@ -136,6 +148,35 @@ class UserController extends BaseController
 
             // Return a JSON response
             return $this->response->setJSON(['status' => 'success', 'message' => 'Absen berhasil disimpan!']);
+        } catch (\Exception $e) {
+            // Return error response
+            return $this->response->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+
+
+    public function submit_izin()
+    {
+        try {
+            $absenModel = new AbsensiModel();
+
+            $session = session();
+            $id = $session->get('id');
+            $nama = $session->get('Nama');
+
+            $data = [
+                'Nama' => $this->request->getPost('Nama'),
+                'jam_masuk' => $this->request->getPost('jam_masuk'),
+                'jam_keluar' => $this->request->getPost('jam_keluar'),
+                'tanggal' => $this->request->getPost('tanggal'),
+                'keterangan' => $this->request->getPost('keterangan'),
+            ];
+            $absenModel->save($data);
+            // Return a JSON response
+            $session->setFlashdata('status', 'success');
+            $session->setFlashdata('message', 'Absen berhasil disimpan!');
+            // Redirect ke halaman user list
+            return redirect()->to('user/dashboard');
         } catch (\Exception $e) {
             // Return error response
             return $this->response->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
@@ -212,12 +253,17 @@ class UserController extends BaseController
             return redirect()->back()->withInput()->with('errors', $userModel->errors());
         }
 
-        session()->setFlashdata('success', 'Berhasil Update.');
-
+        session()->setFlashdata('status', 'success');
+        session()->setFlashdata('message', 'Berhasil diupdate!');
         // Redirect ke halaman user list
         return redirect()->to('user/dashboard');
     }
 
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to('/');
+    }
     public function block()
     {
         return view('block_akses');

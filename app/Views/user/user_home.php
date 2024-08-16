@@ -1,3 +1,16 @@
+<?php if (session()->getFlashdata('status')): ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: '<?= session()->getFlashdata('status') ?>',
+                title: '<?= session()->getFlashdata('status') === 'success' ? 'Berhasil!' : 'Gagal!' ?>',
+                text: '<?= session()->getFlashdata('message') ?>',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+<?php endif; ?>
 <div class="section bg-primary" id="user-section">
     <div id="user-detail">
         <div>
@@ -16,21 +29,20 @@
             <div class="list-menu">
                 <div class="item-menu text-center">
                     <div class="menu-icon">
-                        <a href="" class="green" style="font-size: 40px"><i class="fas fa-user"></i>
+                        <a href="<?= base_url('user/lokasi') ?>" class="orange" style="font-size: 40px">
+                            <i class="fas fa-map-marker-alt"></i>
                         </a>
                     </div>
-                    <div class="menu-name">
-                        <span class="text-center">Profil</span>
-                    </div>
+                    <div class="menu-name">Lokasi</div>
                 </div>
                 <div class="item-menu text-center">
                     <div class="menu-icon">
-                        <a href="" class="danger" style="font-size: 40px">
+                        <a href="<?= base_url('user/izin') ?>" class="danger" style="font-size: 40px">
                             <i class="fas fa-calendar-alt"></i>
                         </a>
                     </div>
                     <div class="menu-name">
-                        <span class="text-center">Cuti</span>
+                        <span class="text-center">Izin</span>
                     </div>
                 </div>
                 <div class="item-menu text-center">
@@ -45,11 +57,11 @@
                 </div>
                 <div class="item-menu text-center">
                     <div class="menu-icon">
-                        <a href="<?= base_url('user/lokasi') ?>" class="orange" style="font-size: 40px">
-                            <i class="fas fa-map-marker-alt"></i>
+                        <a href="<?= base_url('user/logout') ?>" style="font-size: 40px;color:red">
+                            <i class="fas fa-sign-out-alt"></i>
                         </a>
                     </div>
-                    <div class="menu-name">Lokasi</div>
+                    <div class="menu-name">Keluar</div>
                 </div>
             </div>
         </div>
@@ -224,8 +236,6 @@
                             </div>
                         </div>
                     </li>
-
-
                 </ul>
             </div>
             <div class="tab-pane fade" id="profile" role="tabpanel">

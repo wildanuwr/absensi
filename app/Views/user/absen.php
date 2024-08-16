@@ -1,3 +1,16 @@
+<?php if (session()->getFlashdata('status')): ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: '<?= session()->getFlashdata('status') ?>',
+                title: '<?= session()->getFlashdata('status') === 'success' ? 'Berhasil!' : 'Gagal!' ?>',
+                text: '<?= session()->getFlashdata('message') ?>',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+<?php endif; ?>
 <!-- App Header -->
 <div class="appHeader bg-primary text-light">
     <div class="left">

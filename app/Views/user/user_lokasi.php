@@ -11,6 +11,4 @@
 <!-- * App Header -->
 
 <h1>Lokasi Saat Ini</h1>
-<div id="map"></div>
-
-<script src="<?= base_url()  ?>/users/js/lokasi.js"></script>
+<div style="height: 50rem;" id="map"></div>

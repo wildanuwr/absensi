@@ -24,15 +24,15 @@
      <!-- Nav Item - Pages Collapse Menu -->
      <!-- Heading -->
      <li class="nav-item">
-         <a class="nav-link" href="dasboard">
+         <a class="nav-link" href="<?= base_url() ?>admin/dasboard">
              <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Laporan Absensi Harian</span></a>
+             <span>Laporan Absensi</span></a>
      </li>
      <!-- Nav Item - Tables -->
      <li class="nav-item">
-         <a class="nav-link" href="dasboard">
+         <a class="nav-link" href="<?= base_url() ?>admin/manajementlokasi">
              <i class="fas fa-fw fa-tachometer-alt"></i>
-             <span>Laporan Absensi</span></a>
+             <span>Manajement Lokasi</span></a>
      </li>
 
      <li class="nav-item">

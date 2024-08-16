@@ -54,6 +54,3 @@
   });
 
 })(jQuery); // End of use strict
-
-//js modal editprofil//
-

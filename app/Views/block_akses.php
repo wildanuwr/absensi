@@ -88,6 +88,6 @@
     </div>
 
     <div class="buttons">
-        <a class="button" href="dashboard">Go to homepage</a>
+        <a class="button" href="<?= base_url('home/redirectToDashboard') ?>">Go to homepage</a>
     </div>
 </div>

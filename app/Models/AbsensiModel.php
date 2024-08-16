@@ -15,7 +15,8 @@ class AbsensiModel extends Model
         'jam_keluar',
         'foto',
         'lokasi',
-        'tanggal'
+        'tanggal',
+        'keterangan'
     ];
 
     public function saveAbsen($data)

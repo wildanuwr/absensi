@@ -5,6 +5,7 @@ namespace App\Controllers;
 use CodeIgniter\Controller;
 use App\Models\UserModel;
 use App\Models\AbsensiModel;
+use App\Models\LokasiModel;
 
 class AdminController extends BaseController
 {
@@ -83,6 +84,40 @@ class AdminController extends BaseController
         echo view('admin/manajementuser', $data);
     }
 
+    public function manajementlokasi()
+    {
+        $session = session();
+        $id = $session->get('id');
+        if (!$id) {
+            return redirect()->to('/');
+        }
+
+        $user = $this->loadUserData($id);
+        $data['user'] = $user;
+        $data['judul'] = 'Manajement Lokasi';
+
+        $lokasimodel = new LokasiModel();
+        $data['lokasi'] = $lokasimodel->getAllLokasi();
+
+        // Mengirim data ke view
+        echo view('admin/manajementlokasi', $data);
+    }
+
+    public function simpanlokasi()
+    {
+        $lokasiModel = new LokasiModel();
+
+        $data = [
+            'nama_lokasi' => $this->request->getPost('nama_lokasi'),
+            'latitude' => $this->request->getPost('latitude'),
+            'longitude' => $this->request->getPost('longitude'),
+            'radius' => $this->request->getPost('radius'),
+        ];
+
+        $lokasiModel->simpanLokasi($data);
+
+        return redirect()->to('admin/manajementlokasi');
+    }
     public function addUser()
     {
         $userModel = new UserModel();
