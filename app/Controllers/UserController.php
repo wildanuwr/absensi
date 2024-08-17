@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use App\Models\AbsensiModel;
+use App\Models\LokasiModel;
 
 class UserController extends BaseController
 {
@@ -105,55 +106,97 @@ class UserController extends BaseController
     }
 
     public function submit_absen()
-    {
-        try {
-            $absenModel = new AbsensiModel();
+{
+    try {
+        $absenModel = new AbsensiModel();
+        $lokasiModel = new LokasiModel();
 
-            $session = session();
-            $id = $session->get('id');
-            $nama = $session->get('Nama');
+        $session = session();
+        $id = $session->get('id');
+        $nama = $session->get('Nama');
 
-            // Generate random file name
-            $date = date('YmdHis'); // Format: 20240810120000
-            $randomName = $nama . '_' . $date . '.png';
+        // Generate random file name
+        $date = date('YmdHis'); // Format: 20240810120000
+        $randomName = $nama . '_' . $date . '.png';
 
-            // Handle file upload
-            $foto = $this->request->getFile('foto');
-            if ($foto->isValid() && !$foto->hasMoved()) {
-                $filePath = FCPATH . 'img/foto/';
-                $foto->move($filePath, $randomName);
+        // Handle file upload
+        $foto = $this->request->getFile('foto');
+        if ($foto->isValid() && !$foto->hasMoved()) {
+            $filePath = FCPATH . 'img/foto/';
+            $foto->move($filePath, $randomName);
 
-                // Prepare data to save
-                $jamMasuk = $this->request->getPost('jam_masuk');
-                $jamKeluar = $this->request->getPost('jam_keluar');
+            // Ambil lokasi referensi dari database
+            $lokasiData = $lokasiModel->where('nama_lokasi', 'Lokasi Absen')->first();
 
-                // Set jam_masuk to null if jam_keluar is provided
-                if (!empty($jamKeluar)) {
-                    $jamMasuk = '';
+            if ($lokasiData) {
+                $referenceLatitude = $lokasiData['latitude'];
+                $referenceLongitude = $lokasiData['longitude'];
+                $allowedRadius = $lokasiData['radius']; // dalam meter
+
+                // Ambil lokasi user dari form
+                $userLatitude = $this->request->getPost('latitude');
+                $userLongitude = $this->request->getPost('longitude');
+
+                // Hitung jarak antara user dan lokasi referensi
+                $distance = $this->calculateDistance($userLatitude, $userLongitude, $referenceLatitude, $referenceLongitude);
+
+                if ($distance <= $allowedRadius) {
+                    // Jarak dalam batas radius, izinkan absen
+
+                    // Set jam_masuk to null if jam_keluar is provided
+                    $jamMasuk = $this->request->getPost('jam_masuk');
+                    $jamKeluar = $this->request->getPost('jam_keluar');
+                    if (!empty($jamKeluar)) {
+                        $jamMasuk = null; // Kosongkan jam_masuk jika jam_keluar diisi
+                    }
+
+                    $data = [
+                        'Nama' => $nama,
+                        'jam_masuk' => $jamMasuk,
+                        'jam_keluar' => $jamKeluar,
+                        'foto' => $randomName,
+                        'lokasi' => $this->request->getPost('lokasi'),
+                        'latitude' => $userLatitude,
+                        'longitude' => $userLongitude,
+                        'tanggal' => date('Y-m-d'),
+                    ];
+
+                    $absenModel->save($data);
+
+                    // Return a JSON response
+                    return $this->response->setJSON(['status' => 'success', 'message' => 'Absen berhasil disimpan!']);
+                } else {
+                    // Jarak melebihi radius, tolak absen
+                    throw new \RuntimeException('Anda berada di luar radius yang diizinkan untuk absen.');
                 }
-
-                $data = [
-                    'Nama' => $this->request->getPost('Nama'),
-                    'jam_masuk' => $jamMasuk,
-                    'jam_keluar' => $jamKeluar,
-                    'foto' => $randomName,
-                    'lokasi' => $this->request->getPost('lokasi'),
-                    'tanggal' => date('Y-m-d'),
-                ];
-
-                $absenModel->save($data);
             } else {
-                throw new \RuntimeException('File upload error.');
+                throw new \RuntimeException('Lokasi absen tidak ditemukan di database.');
             }
-
-            // Return a JSON response
-            return $this->response->setJSON(['status' => 'success', 'message' => 'Absen berhasil disimpan!']);
-        } catch (\Exception $e) {
-            // Return error response
-            return $this->response->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
+        } else {
+            throw new \RuntimeException('File upload error.');
         }
+    } catch (\Exception $e) {
+        // Return error response
+        return $this->response->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
     }
+}
 
+private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+{
+    $earth_radius = 6371000; // in meters
+
+    $dLat = deg2rad($lat2 - $lat1);
+    $dLon = deg2rad($lon2 - $lon1);
+
+    $a = sin($dLat / 2) * sin($dLat / 2) +
+         cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+         sin($dLon / 2) * sin($dLon / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+    $distance = $earth_radius * $c;
+
+    return $distance; // Returns the distance in meters
+}
 
     public function submit_izin()
     {

@@ -37,7 +37,20 @@
                                     </a>
                                 <?php endif; ?>
                             </td>
-                            <td><?= esc($row['jam_keluar']); ?></td>
+                            <td style="background-color: 
+    <?php
+                        if ($row['jam_keluar'] == 'izin') {
+                            echo '#ffc107'; // Kuning untuk status izin
+                        } elseif (!empty($row['jam_keluar'])) {
+                            echo '#28a745'; // Hijau jika ada jam keluar yang lain (selain izin)
+                        } elseif ($row['jam_keluar'] == 'libur') {
+                            echo '#dc3545'; // Merah jika tidak ada jam keluar
+                        } else {
+                            echo '#343a40'; // Hitam jika data kosong (belum ada jam keluar)
+                        }
+    ?>">
+                                <?= esc($row['jam_keluar']) ?: 'Belum Keluar'; ?>
+                            </td>
                             <td>
                                 <?php if ($row['jam_keluar'] && $row['foto_pulang']): ?>
                                     <img src="<?= base_url('img/foto/' . esc($row['foto_pulang'])) ?>" alt="Foto Pulang" width="50" height="50">
