@@ -14,7 +14,11 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     $routes->post('simpanlokasi', 'AdminController::simpanlokasi');
     $routes->post('updateUser/(:num)', 'AdminController::updateUser/$1');
     $routes->get('profile/(:num)', 'AdminController::getUserData/$1');
+    $routes->get('penempatan', 'AdminController::penempatan');
+    $routes->post('updatePenempatan', 'AdminController::updatePenempatan/$1');
     $routes->post('addUser', 'AdminController::addUser');
+    $routes->get('laporanabsensi', 'AdminController::laporanabsensi');
+    $routes->get('download-laporan', 'AdminController::download_laporan');
     $routes->get('logout', 'AuthController::logout');
     $routes->get('block', 'AdminController::block');
 

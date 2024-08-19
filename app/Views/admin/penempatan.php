@@ -10,8 +10,8 @@
         <h1><?= $judul ?></h1>
         <div class="row d-flex">
             <div class="col">
-                <?= $this->include('admin/includes/modallokasi') ?>
-                <button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#ModalLokasi">+ Tambah</button>
+                <?= $this->include('admin/includes/modalpenempatan') ?>
+                <button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#ModalPenempatan">+ Tambah</button>
             </div>
         </div>
         <table class="table table-striped">
@@ -19,25 +19,17 @@
                 <tr>
                     <th>ID</th>
                     <th>Nama</th>
-                    <th>Penempatan</th>
+                    <th>Nama Lokasi</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if (!empty($lokasi) && is_array($lokasi)): ?>
-                    <?php foreach ($lokasi as $lok): ?>
-                        <tr>
-                            <td><?= esc($lok['id']); ?></td>
-                            <td><?= esc($lok['Nama']); ?></td>
-                            <td><?= esc($lok['nama_lokasi']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+                <?php foreach ($user_lokasi as $tempat): ?>
                     <tr>
-                        <td colspan="5">Tidak ada data Penempatan.</td>
+                        <td><?= $tempat['id'] ?></td>
+                        <td><?= $tempat['Nama'] ?></td>
+                        <td><?= $tempat['nama_lokasi'] ?></td>
                     </tr>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
-
-    </div>
-    <?= $this->EndSection() ?>
+        <?= $this->EndSection() ?>

@@ -1,16 +1,14 @@
-<?php if (session()->getFlashdata('status')): ?>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<?php if (session()->getFlashdata('success')): ?>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            Swal.fire({
-                icon: '<?= session()->getFlashdata('status') ?>',
-                title: '<?= session()->getFlashdata('status') === 'success' ? 'Berhasil!' : 'Gagal!' ?>',
-                text: '<?= session()->getFlashdata('message') ?>',
-                confirmButtonText: 'OK'
-            });
-        });
+        alert('<?= session()->getFlashdata('success') ?>');
+    </script>
+<?php elseif (session()->getFlashdata('error')): ?>
+    <script>
+        alert('<?= session()->getFlashdata('error') ?>');
     </script>
 <?php endif; ?>
+
 <!-- App Header -->
 <div class="appHeader bg-primary text-light">
     <div class="left">

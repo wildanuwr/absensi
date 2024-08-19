@@ -24,7 +24,7 @@
      <!-- Nav Item - Pages Collapse Menu -->
      <!-- Heading -->
      <li class="nav-item">
-         <a class="nav-link" href="<?= base_url() ?>admin/dasboard">
+         <a class="nav-link" href="<?= base_url() ?>admin/laporanabsensi">
              <i class="fas fa-fw fa-tachometer-alt"></i>
              <span>Laporan Absensi</span></a>
      </li>
@@ -41,6 +41,11 @@
              <span>User Management</span></a>
      </li>
 
+     <li class="nav-item">
+         <a class="nav-link" href="<?= base_url() ?>admin/penempatan">
+             <i class="fas fa-fw fa-tachometer-alt"></i>
+             <span>Penempatan</span></a>
+     </li>
 
      <!-- Divider -->
      <hr class="sidebar-divider d-none d-md-block">

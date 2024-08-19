@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Models\AbsensiModel;
 use App\Models\LokasiModel;
+use App\Models\UserLokasiModel;
 
 class UserController extends BaseController
 {
@@ -106,97 +107,116 @@ class UserController extends BaseController
     }
 
     public function submit_absen()
-{
-    try {
-        $absenModel = new AbsensiModel();
-        $lokasiModel = new LokasiModel();
+    {
+        $response = [
+            'status' => 'error',
+            'message' => 'Terjadi kesalahan yang tidak diketahui.'
+        ];
 
-        $session = session();
-        $id = $session->get('id');
-        $nama = $session->get('Nama');
+        try {
+            $absenModel = new AbsensiModel();
+            $userLokasiModel = new UserLokasiModel();
+            $lokasiModel = new LokasiModel();
 
-        // Generate random file name
-        $date = date('YmdHis'); // Format: 20240810120000
-        $randomName = $nama . '_' . $date . '.png';
+            $session = session();
+            $id = $session->get('id');
+            $nama = $session->get('Nama');
 
-        // Handle file upload
-        $foto = $this->request->getFile('foto');
-        if ($foto->isValid() && !$foto->hasMoved()) {
-            $filePath = FCPATH . 'img/foto/';
-            $foto->move($filePath, $randomName);
+            // Generate nama file acak untuk foto
+            $date = date('YmdHis');
+            $randomName = $nama . '_' . $date . '.png';
 
-            // Ambil lokasi referensi dari database
-            $lokasiData = $lokasiModel->where('nama_lokasi', 'Lokasi Absen')->first();
+            // Ambil lokasi pengguna saat ini dari form
+            $latitude = $this->request->getPost('latitude');
+            $longitude = $this->request->getPost('longitude');
 
-            if ($lokasiData) {
-                $referenceLatitude = $lokasiData['latitude'];
-                $referenceLongitude = $lokasiData['longitude'];
-                $allowedRadius = $lokasiData['radius']; // dalam meter
+            // Ambil lokasi yang ditetapkan untuk pengguna dari database
+            $userLokasi = $userLokasiModel->where('Nama', $nama)->first();
+            if (!$userLokasi) {
+                throw new \RuntimeException('Data lokasi pengguna tidak ditemukan.');
+            }
 
-                // Ambil lokasi user dari form
-                $userLatitude = $this->request->getPost('latitude');
-                $userLongitude = $this->request->getPost('longitude');
+            $lokasi = $lokasiModel->where('nama_lokasi', $userLokasi['nama_lokasi'])->first();
+            if (!$lokasi) {
+                throw new \RuntimeException('Lokasi tidak ditemukan.');
+            }
 
-                // Hitung jarak antara user dan lokasi referensi
-                $distance = $this->calculateDistance($userLatitude, $userLongitude, $referenceLatitude, $referenceLongitude);
+            // Hitung jarak antara lokasi pengguna saat ini dengan lokasi yang ditetapkan
+            $distance = $this->calculateDistance($latitude, $longitude, $lokasi['latitude'], $lokasi['longitude']);
+            if ($distance > $lokasi['radius']) {
+                throw new \RuntimeException('Lokasi Anda berada di luar jangkauan.');
+            }
 
-                if ($distance <= $allowedRadius) {
-                    // Jarak dalam batas radius, izinkan absen
+            // Proses upload file
+            $foto = $this->request->getFile('foto');
+            if ($foto->isValid() && !$foto->hasMoved()) {
+                $filePath = FCPATH . 'img/foto/';
+                $foto->move($filePath, $randomName);
 
-                    // Set jam_masuk to null if jam_keluar is provided
-                    $jamMasuk = $this->request->getPost('jam_masuk');
-                    $jamKeluar = $this->request->getPost('jam_keluar');
-                    if (!empty($jamKeluar)) {
-                        $jamMasuk = null; // Kosongkan jam_masuk jika jam_keluar diisi
-                    }
+                // Cek apakah pengguna sudah absen masuk hari ini
+                $existingRecord = $absenModel->where(['Nama' => $nama, 'tanggal' => date('Y-m-d')])->first();
 
+                if ($existingRecord) {
+                    // Jika sudah ada record, update record yang ada
+                    $data = [
+                        'jam_keluar' => $this->request->getPost('jam_keluar'),
+                        'foto_keluar' => $randomName,  // Simpan foto untuk jam keluar
+                        'lokasi_keluar' => $latitude . ',' . $longitude  // Simpan lokasi untuk jam keluar
+                    ];
+
+                    // Gunakan `update()` untuk memperbarui record yang ada
+                    $absenModel->update($existingRecord['id'], $data);
+                } else {
+                    // Jika belum ada record, simpan record baru
                     $data = [
                         'Nama' => $nama,
-                        'jam_masuk' => $jamMasuk,
-                        'jam_keluar' => $jamKeluar,
-                        'foto' => $randomName,
-                        'lokasi' => $this->request->getPost('lokasi'),
-                        'latitude' => $userLatitude,
-                        'longitude' => $userLongitude,
+                        'jam_masuk' => $this->request->getPost('jam_masuk'),
+                        'foto_masuk' => $randomName,  // Simpan foto untuk jam masuk
+                        'lokasi_masuk' => $latitude . ',' . $longitude,  // Simpan lokasi untuk jam masuk
                         'tanggal' => date('Y-m-d'),
                     ];
 
-                    $absenModel->save($data);
-
-                    // Return a JSON response
-                    return $this->response->setJSON(['status' => 'success', 'message' => 'Absen berhasil disimpan!']);
-                } else {
-                    // Jarak melebihi radius, tolak absen
-                    throw new \RuntimeException('Anda berada di luar radius yang diizinkan untuk absen.');
+                    // Gunakan `insert()` untuk menambahkan record baru
+                    $absenModel->insert($data);
                 }
+
+                $response = [
+                    'status' => 'success',
+                    'message' => 'Absen berhasil disimpan!'
+                ];
             } else {
-                throw new \RuntimeException('Lokasi absen tidak ditemukan di database.');
+                throw new \RuntimeException('Kesalahan dalam mengupload file.');
             }
-        } else {
-            throw new \RuntimeException('File upload error.');
+        } catch (\Exception $e) {
+            log_message('error', 'Error in submit_absen: ' . $e->getMessage());
+            $response['message'] = $e->getMessage();
         }
-    } catch (\Exception $e) {
-        // Return error response
-        return $this->response->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
+
+        return $this->response->setJSON($response);
     }
-}
 
-private function calculateDistance($lat1, $lon1, $lat2, $lon2)
-{
-    $earth_radius = 6371000; // in meters
 
-    $dLat = deg2rad($lat2 - $lat1);
-    $dLon = deg2rad($lon2 - $lon1);
 
-    $a = sin($dLat / 2) * sin($dLat / 2) +
-         cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-         sin($dLon / 2) * sin($dLon / 2);
-    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
-    $distance = $earth_radius * $c;
+    // Function to calculate distance between two points
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000; // Earth radius in meter
 
-    return $distance; // Returns the distance in meters
-}
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        $distance = $earthRadius * $c;
+
+        return $distance;
+    }
+
 
     public function submit_izin()
     {
@@ -228,32 +248,43 @@ private function calculateDistance($lat1, $lon1, $lat2, $lon2)
 
     public function cek_jam_masuk()
     {
-        // Ambil parameter dari query string
         $nama = $this->request->getGet('nama');
         $date = $this->request->getGet('date');
 
-        // Validasi parameter
         if (!$nama || !$date) {
-            return $this->response->setJSON(['error' => 'Missing parameters']);
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Parameter tidak lengkap.']);
         }
 
         $model = new AbsensiModel();
 
-        // Query untuk memeriksa jam masuk
-        $builder = $model->builder();
-        $builder->select('jam_masuk');
-        $builder->where('Nama', $nama);
-        $builder->where('tanggal', $date);
-        $query = $builder->get();
+        // Cek apakah ada absensi dengan Nama dan tanggal yang diberikan
+        $absen = $model->where('Nama', $nama)
+            ->where('tanggal', $date)
+            ->first();
 
-        $result = $query->getRowArray();
-
-        if ($result) {
-            return $this->response->setJSON(['jam_masuk' => $result['jam_masuk']]);
+        if ($absen) {
+            if ($absen['jam_keluar']) {
+                // Jika jam keluar sudah diisi, berarti sudah absen penuh hari ini
+                return $this->response->setJSON([
+                    'status' => 'already_absent',
+                    'message' => 'Anda sudah absen hari ini.'
+                ]);
+            } else {
+                // Jika hanya jam masuk yang ada
+                return $this->response->setJSON([
+                    'status' => 'has_in',
+                    'message' => 'Anda sudah melakukan check-in.'
+                ]);
+            }
         } else {
-            return $this->response->setJSON(['jam_masuk' => null]);
+            // Jika belum ada data absensi hari ini
+            return $this->response->setJSON([
+                'status' => 'not_checked_in',
+                'message' => 'Anda belum melakukan check-in hari ini.'
+            ]);
         }
     }
+
 
     public function updateUser($id)
     {
@@ -269,7 +300,6 @@ private function calculateDistance($lat1, $lon1, $lat2, $lon2)
             'email'    => $this->request->getPost('email'),
             'foto'    => $this->request->getPost('foto'),
             'no_hp'    => $this->request->getPost('no_hp'),
-            'role'     => $this->request->getPost('role')
         ];
 
         // Cek apakah password diisi, jika tidak gunakan password lama

@@ -18,100 +18,118 @@ function handleSubmit() {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     var dataURL = canvas.toDataURL('image/png');
 
-    // Konversi dataURL ke Blob
     var blob = dataURLToBlob(dataURL);
     var file = new File([blob], 'foto_' + Date.now() + '.png', { type: 'image/png' });
 
-    var jamMasukInput = document.querySelector('input[name="jam_masuk"]');
-    var jamKeluarInput = document.getElementById('jam_keluar');
-    var currentDate = new Date().toISOString().split('T')[0];  // Format date YYYY-MM-DD
     var nama = document.querySelector('input[name="Nama"]').value;
+    var currentDate = new Date().toISOString().split('T')[0];
 
-    // Cek apakah ada jam_masuk untuk nama dan tanggal hari ini
     fetch(`cek_jam_masuk?nama=${encodeURIComponent(nama)}&date=${encodeURIComponent(currentDate)}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log('Data jam_masuk:', data);  // Log response dari server
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'already_absent') {
+            Swal.fire({
+                icon: 'info',
+                title: 'Informasi',
+                text: data.message,
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'dashboard';
+                }
+            });
+            return;
+        }
 
-            if (data.jam_masuk) {
-                // Jika ada jam masuk, maka set jam keluar
-                jamKeluarInput.value = new Date().toLocaleTimeString('id-ID', { hour12: false });
-            } else {
-                // Jika tidak ada, maka set jam masuk
-                jamMasukInput.value = new Date().toLocaleTimeString('id-ID', { hour12: false });
-            }
+        // Jika ada jam masuk, set jam keluar
+        var jamMasukInput = document.querySelector('input[name="jam_masuk"]');
+        var jamKeluarInput = document.getElementById('jam_keluar');
 
-            console.log('Jam Masuk:', jamMasukInput.value);  // Log jam masuk
-            console.log('Jam Keluar:', jamKeluarInput.value);  // Log jam keluar
+        if (data.status === 'has_in') {
+            jamKeluarInput.value = new Date().toLocaleTimeString('id-ID', { hour12: false });
+        } else {
+            jamMasukInput.value = new Date().toLocaleTimeString('id-ID', { hour12: false });
+        }
 
-            // Melanjutkan ke proses geolocation dan pengiriman data
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (position) {
-                    var pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
+        // Dapatkan lokasi pengguna dan lanjutkan ke submit_absen
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
 
-                    // Set lokasi value as "latitude,longitude"
-                    document.getElementById('lokasi').value = pos.lat + ',' + pos.lng;
+                var formData = new FormData();
+                formData.append('foto', file);
+                formData.append('Nama', nama);
+                formData.append('jam_masuk', jamMasukInput.value);
+                formData.append('jam_keluar', jamKeluarInput.value);
+                formData.append('latitude', pos.lat);
+                formData.append('longitude', pos.lng);
 
-                    var formData = new FormData();
-                    formData.append('foto', file);
-                    formData.append('Nama', nama);
-                    formData.append('jam_masuk', jamMasukInput.value);
-                    formData.append('jam_keluar', jamKeluarInput.value);
-                    formData.append('lokasi', document.querySelector('input[name="lokasi"]').value);
-
-                    fetch("submit_absen", {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(jsonResponse => {
-                        console.log('Response dari server:', jsonResponse);
-                        if (jsonResponse.status === 'success') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: jsonResponse.message,
-                                confirmButtonText: 'OK'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // Redirect to dashboard
-                                    window.location.href = 'user/dashboard'; // Pastikan URL ini sesuai dengan rute dashboard Anda
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal!',
-                                text: jsonResponse.message,
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
+                fetch("submit_absen", {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(jsonResponse => {
+                    if (jsonResponse.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: jsonResponse.message,
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'dashboard';
+                            }
+                        });
+                    } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Kesalahan!',
-                            text: 'Terjadi kesalahan saat mengirim data.',
+                            title: 'Gagal!',
+                            text: jsonResponse.message,
                             confirmButtonText: 'OK'
                         });
-                    });                    
-
-                }, function () {
-                    alert('Error: The Geolocation service failed.');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Kesalahan!',
+                        text: 'Terjadi kesalahan saat mengirim data.',
+                        confirmButtonText: 'OK'
+                    });
                 });
-            } else {
-                alert('Error: Your browser doesn\'t support geolocation.');
-            }
-        })
-        .catch(error => {
-            console.error('Error checking jam_masuk:', error);
-            alert('Terjadi kesalahan saat memeriksa jam masuk.');
+
+            }, function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan!',
+                    text: 'Layanan Geolokasi gagal.',
+                    confirmButtonText: 'OK'
+                });
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Kesalahan!',
+                text: 'Peramban Anda tidak mendukung geolokasi.',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Kesalahan!',
+            text: 'Terjadi kesalahan saat memeriksa jam masuk.',
+            confirmButtonText: 'OK'
         });
+    });
 }
+
+
 
 // Konversi data URL ke Blob
 function dataURLToBlob(dataURL) {
@@ -159,15 +177,3 @@ function handleLocationError(browserHasGeolocation) {
 
 // Inisialisasi peta
 initMap();
-
-// Konversi data URL ke Blob
-function dataURLToBlob(dataURL) {
-    var byteString = atob(dataURL.split(',')[1]);
-    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeString });
-}

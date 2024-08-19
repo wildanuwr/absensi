@@ -13,8 +13,10 @@ class AbsensiModel extends Model
         'Nama',
         'jam_masuk',
         'jam_keluar',
-        'foto',
-        'lokasi',
+        'foto_keluar',
+        'foto_masuk',
+        'lokasi_masuk',
+        'lokasi_keluar',
         'tanggal',
         'keterangan'
     ];
