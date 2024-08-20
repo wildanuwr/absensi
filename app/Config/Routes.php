@@ -11,12 +11,15 @@ $routes->group('admin', ['filter' => 'admin'], function ($routes) {
     $routes->get('dashboard', 'AdminController::index/$1');
     $routes->get('manajementuser', 'AdminController::manajementuser/$1');
     $routes->get('manajementlokasi', 'AdminController::manajementlokasi');
+    $routes->get('download-template', 'AdminController::downloadTemplate');
+    $routes->post('import-excel', 'AdminController::importExcel');
     $routes->post('simpanlokasi', 'AdminController::simpanlokasi');
     $routes->post('updateUser/(:num)', 'AdminController::updateUser/$1');
     $routes->get('profile/(:num)', 'AdminController::getUserData/$1');
     $routes->get('penempatan', 'AdminController::penempatan');
     $routes->post('updatePenempatan', 'AdminController::updatePenempatan/$1');
     $routes->post('addUser', 'AdminController::addUser');
+    $routes->get('deleteUser/(:num)', 'AdminController::deleteUser/$1');
     $routes->get('laporanabsensi', 'AdminController::laporanabsensi');
     $routes->get('download-laporan', 'AdminController::download_laporan');
     $routes->get('logout', 'AuthController::logout');
@@ -34,6 +37,7 @@ $routes->group('user', ['filter' => 'user'], function ($routes) {
     $routes->get('izin', 'UserController::izin');
     $routes->get('logout', 'AuthController::logout');
     $routes->post('submit_izin', 'UserController::submit_izin');
+    $routes->get('user_history', 'UserController::history/$1');
     $routes->post('submit_absen', 'UserController::submit_absen');
     $routes->get('cek_jam_masuk', 'UserController::cek_jam_masuk');
     $routes->get('block', 'UserController::block');

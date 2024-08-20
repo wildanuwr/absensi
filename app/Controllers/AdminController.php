@@ -9,6 +9,7 @@ use App\Models\LokasiModel;
 use App\Models\UserLokasiModel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class AdminController extends BaseController
 {
@@ -65,6 +66,100 @@ class AdminController extends BaseController
 
         // Load view dengan data
         echo view('admin/dashboard', $data); // Pastikan nama view sesuai
+    }
+
+    public function downloadTemplate()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Tambahkan header kolom
+        $sheet->setCellValue('A1', 'Nama');
+        $sheet->setCellValue('B1', 'Jabatan');
+        $sheet->setCellValue('C1', 'No Hp');
+        $sheet->setCellValue('D1', 'Email');
+        $sheet->setCellValue('E1', 'Password');
+        $sheet->setCellValue('F1', 'Role');
+        $sheet->setCellValue('I4', 'NB: Untuk Role 1 = Admin Dan Role 2 User');
+
+        // Mengatur lebar kolom secara otomatis
+        foreach (range('A', 'F') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Buat file Excel
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'user_template.xlsx';
+
+        // Mengatur header untuk mengunduh file
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // Tulis file ke output
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function deleteUser($id)
+    {
+        $userModel = new UserModel();
+
+        // Cek apakah user dengan ID yang diberikan ada
+        $user = $userModel->find($id);
+        if (!$user) {
+            return redirect()->to('admin/manajementuser')->with('error', 'User tidak ditemukan.');
+        }
+
+        // Hapus user berdasarkan ID
+        $userModel->delete($id);
+
+        return redirect()->to('admin/manajementuser')->with('success', 'User berhasil dihapus.');
+    }
+
+    public function importExcel()
+    {
+        $file = $this->request->getFile('file_excel');
+        $randomnama =  $file->getRandomName();
+        if ($file->isValid() && !$file->hasMoved()) {
+            // Pindahkan file ke folder sementara
+            $filePath = FCPATH . 'file_upload/' . $randomnama;
+            $file->move(FCPATH . 'file_upload', $randomnama);
+
+            // Load file Excel
+            $spreadsheet = IOFactory::load($filePath);
+
+            // Ambil sheet pertama
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = [];
+            foreach ($sheet->getRowIterator(2) as $row) { // Mulai dari baris ke-2 (baris pertama biasanya header)
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $rowData = [];
+                foreach ($cellIterator as $cell) {
+                    $rowData[] = $cell->getValue();
+                }
+
+                // Sesuaikan urutan sesuai format: Nama, Jabatan, No Hp, Email, Password, Role
+                $data[] = [
+                    'Nama' => $rowData[0],
+                    'jabatan' => $rowData[1],
+                    'no_hp' => $rowData[2],
+                    'email' => $rowData[3],
+                    'password' => password_hash($rowData[4], PASSWORD_DEFAULT), // Hash password
+                    'role' => $rowData[5],
+                ];
+            }
+
+            // Simpan data ke database
+            $userModel = new UserModel();
+            $userModel->insertBatch($data);
+
+            return redirect()->to('admin/manajementuser')->with('success', 'Berhasil Upload User.');
+        }
+
+        return redirect()->back()->with('error', 'Terjadi Kesalahan Saat Upload file.');
     }
 
     public function laporanabsensi()

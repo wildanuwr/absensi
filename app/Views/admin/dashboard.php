@@ -73,4 +73,5 @@
             </tbody>
         </table>
     </div>
-    <?= $this->EndSection() ?>
+</div>
+<?= $this->EndSection() ?>

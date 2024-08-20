@@ -14,22 +14,26 @@
                 <button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#ModalPenempatan">+ Tambah</button>
             </div>
         </div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nama</th>
-                    <th>Nama Lokasi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($user_lokasi as $tempat): ?>
+        <div class="container-fludi">
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td><?= $tempat['id'] ?></td>
-                        <td><?= $tempat['Nama'] ?></td>
-                        <td><?= $tempat['nama_lokasi'] ?></td>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Nama Lokasi</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <?= $this->EndSection() ?>
+                </thead>
+                <tbody>
+                    <?php foreach ($user_lokasi as $tempat): ?>
+                        <tr>
+                            <td><?= $tempat['id'] ?></td>
+                            <td><?= $tempat['Nama'] ?></td>
+                            <td><?= $tempat['nama_lokasi'] ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<?= $this->EndSection() ?>

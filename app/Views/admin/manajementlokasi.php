@@ -13,43 +13,35 @@
                 <?= $this->include('admin/includes/modallokasi') ?>
                 <button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#ModalLokasi">+ Tambah</button>
             </div>
-            <div class="col-3 d-flex ">
-                <div class="mb-3">
-                    <label for="file">Upload User</label>
-                    <input type="file" id="file" name="file" multiple />
-                </div>
-                <input class="btn btn-primary" type="submit" value="Submit">
-            </div>
         </div>
     </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nama Lokasi</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Radius (meter)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($lokasi) && is_array($lokasi)): ?>
-                <?php foreach ($lokasi as $lok): ?>
-                    <tr>
-                        <td><?= esc($lok['id']); ?></td>
-                        <td><?= esc($lok['nama_lokasi']); ?></td>
-                        <td><?= esc($lok['latitude']); ?></td>
-                        <td><?= esc($lok['longitude']); ?></td>
-                        <td><?= esc($lok['radius']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
+    <div class="container-fluid">
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td colspan="5">Tidak ada data lokasi.</td>
+                    <th>Nama Lokasi</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Radius (meter)</th>
                 </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
+            </thead>
+            <tbody>
+                <?php if (!empty($lokasi) && is_array($lokasi)): ?>
+                    <?php foreach ($lokasi as $lok): ?>
+                        <tr>
+                            <td><?= esc($lok['nama_lokasi']); ?></td>
+                            <td><?= esc($lok['latitude']); ?></td>
+                            <td><?= esc($lok['longitude']); ?></td>
+                            <td><?= esc($lok['radius']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5">Tidak ada data lokasi.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 <?= $this->EndSection() ?>

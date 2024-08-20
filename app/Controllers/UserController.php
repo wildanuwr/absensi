@@ -36,27 +36,42 @@ class UserController extends BaseController
         $user = $this->loadUserData($id);
         $nama = $user['Nama']; // Ambil nama dari data user
         $date = date('Y-m-d'); // Tanggal hari ini
+        $date_end = date('Y-m-d', strtotime('+30 days')); // 30 hari ke depan
 
         $absenModel = new AbsensiModel();
 
-        // Query untuk mendapatkan semua baris jam masuk dan jam keluar
+        // Query untuk menghitung jumlah kehadiran dan izin
         $builder = $absenModel->builder();
-        $builder->select('jam_masuk, jam_keluar, tanggal');
+        $builder->select('COUNT(*) AS jumlah_hadir, 
+                          SUM(CASE WHEN jam_masuk = "izin" or jam_keluar = "izin" THEN 1 ELSE 0 END) AS jumlah_izin');
         $builder->where('Nama', $nama);
-        $builder->where('tanggal', $date);
+        $builder->where('tanggal >=', $date);
+        $builder->where('tanggal <=', $date_end);
         $query = $builder->get();
 
-        $results = $query->getResultArray(); // Mengambil semua hasil sebagai array
+        $result = $query->getRowArray(); // Mengambil hasil perhitungan sebagai array
+
+        // Query untuk mendapatkan semua baris jam masuk dan jam keluar hari ini
+        $builder2 = $absenModel->builder();
+        $builder2->select('jam_masuk, jam_keluar, tanggal');
+        $builder2->where('Nama', $nama);
+        $builder2->where('tanggal', $date);
+        $query2 = $builder2->get();
+
+        $results = $query2->getResultArray(); // Mengambil semua hasil absensi sebagai array
 
         // Periksa apakah ada hasil dan atur variabel yang sesuai
         $data['user'] = $user;
         $data['judul'] = 'Home';
         $data['menu'] = 'home';
         $data['page'] = 'user/user_home';
-        $data['absensi'] = $results; // Kirim hasil ke view
+        $data['absensi'] = $results; // Kirim hasil absensi ke view
+        $data['jumlah_hadir'] = $result['jumlah_hadir'];
+        $data['jumlah_izin'] = $result['jumlah_izin'];
 
         return view('user/includes/template_user', $data);
     }
+
 
     public function userprofile()
     {
@@ -133,7 +148,7 @@ class UserController extends BaseController
             // Ambil lokasi yang ditetapkan untuk pengguna dari database
             $userLokasi = $userLokasiModel->where('Nama', $nama)->first();
             if (!$userLokasi) {
-                throw new \RuntimeException('Data lokasi pengguna tidak ditemukan.');
+                throw new \RuntimeException('Data lokasi pengguna tidak ditemukan. Silakan Hubungi Admin');
             }
 
             $lokasi = $lokasiModel->where('nama_lokasi', $userLokasi['nama_lokasi'])->first();
@@ -196,7 +211,42 @@ class UserController extends BaseController
     }
 
 
+    public function history()
+    {
+        $session = session();
+        $id = $session->get('id');
+        $nama = $session->get('Nama');
+        $data['user'] = $this->loadUserData($id);
+        $data['menu'] = 'history';
+        $data['judul'] = 'Histori Absensi';
+        $data['page'] = 'user/user_history';
 
+        // Load AbsensiModel
+        $absenModel = new AbsensiModel();
+
+        // Query untuk menggabungkan jam_masuk, jam_keluar, foto, dan lokasi dalam satu baris
+        $builder = $absenModel->builder();
+        $builder->select("
+        absen.Nama,
+        absen.tanggal,
+        MAX(CASE WHEN absen.jam_masuk IS NOT NULL THEN absen.jam_masuk END) as jam_masuk,
+        MAX(CASE WHEN absen.jam_keluar IS NOT NULL THEN absen.jam_keluar END) as jam_keluar,
+        MAX(CASE WHEN absen.jam_masuk IS NOT NULL THEN absen.foto_masuk END) as foto_masuk,
+        MAX(CASE WHEN absen.jam_keluar IS NOT NULL THEN absen.foto_keluar END) as foto_keluar,
+        MAX(CASE WHEN absen.jam_masuk IS NOT NULL THEN absen.lokasi_masuk END) as lokasi_masuk,
+        MAX(CASE WHEN absen.jam_keluar IS NOT NULL THEN absen.lokasi_keluar END) as lokasi_keluar
+    ");
+        // Tambahkan kondisi untuk memfilter berdasarkan id pengguna yang login
+        $builder->where('absen.Nama', $nama);
+        $builder->groupBy('absen.Nama, absen.tanggal');
+        $query = $builder->get();
+        $results = $query->getResultArray();
+
+        // Menyimpan hasil query ke dalam variabel $data['absensi']
+        $data['absensi'] = $results;
+
+        return view('user/includes/template_user', $data);
+    }
 
     // Function to calculate distance between two points
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)
@@ -226,25 +276,42 @@ class UserController extends BaseController
             $session = session();
             $id = $session->get('id');
             $nama = $session->get('Nama');
+            $tanggal = $this->request->getPost('tanggal');
 
-            $data = [
-                'Nama' => $this->request->getPost('Nama'),
-                'jam_masuk' => $this->request->getPost('jam_masuk'),
-                'jam_keluar' => $this->request->getPost('jam_keluar'),
-                'tanggal' => $this->request->getPost('tanggal'),
-                'keterangan' => $this->request->getPost('keterangan'),
-            ];
-            $absenModel->save($data);
+            // Cek apakah sudah ada jam masuk untuk nama dan tanggal ini
+            $existingAbsen = $absenModel->where('Nama', $nama)
+                ->where('tanggal', $tanggal)
+                ->first();
+
+            if ($existingAbsen) {
+                // Jika sudah ada jam masuk, update jam_keluar dengan izin
+                $data = [
+                    'jam_keluar' => $this->request->getPost('jam_keluar'),
+                    'keterangan' => $this->request->getPost('keterangan'),
+                ];
+                $absenModel->update($existingAbsen['id'], $data);
+            } else {
+                // Jika belum ada jam masuk, simpan jam_masuk sebagai izin
+                $data = [
+                    'Nama' => $nama,
+                    'jam_masuk' => $this->request->getPost('jam_masuk'),
+                    'tanggal' => $tanggal,
+                    'keterangan' => $this->request->getPost('keterangan'),
+                ];
+                $absenModel->save($data);
+            }
+
             // Return a JSON response
             $session->setFlashdata('status', 'success');
-            $session->setFlashdata('message', 'Absen berhasil disimpan!');
-            // Redirect ke halaman user list
+            $session->setFlashdata('message', 'Izin berhasil disimpan!');
+            // Redirect ke halaman user dashboard
             return redirect()->to('user/dashboard');
         } catch (\Exception $e) {
             // Return error response
             return $this->response->setJSON(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+
 
     public function cek_jam_masuk()
     {
